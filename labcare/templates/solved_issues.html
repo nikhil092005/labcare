@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LABMentor - Solved Issues</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dashboard.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='solved_issues.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-left">
+        <button class="menu-btn" onclick="toggleSidebar()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <img
+          src="{{ url_for('static', filename='logo.png') }}"
+          alt="Logo"
+          class="nav-logo"
+        />
+        <a href="{{ url_for('auth.dashboard') }}" class="home-link">
+          <i class="fas fa-home"></i> Home
+        </a>
+      </div>
+      <div class="nav-right">
+        <i class="fas fa-crown welcome-icon"></i>
+        <span class="welcome-text">Welcome back, {{ name }}!</span>
+      </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+      <ul class="menu-list">
+        <li>
+          <a href="{{ url_for('auth.dashboard') }}"
+            ><i class="fas fa-home"></i> Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('issues.report_issue') }}"
+            ><i class="fas fa-exclamation-circle"></i> Issue Reporting</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('ai_chat.ai_chat_page') }}"
+            ><i class="fas fa-robot"></i> AI Mentor Chat</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('auth.user_profile') }}"
+            ><i class="fas fa-user"></i> User Profile</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('auth.logout') }}"
+            ><i class="fas fa-sign-out-alt"></i> Logout</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="page-title">
+        <div class="title-left">
+          <i class="fas fa-check-double"></i>
+          <h1>Submitted Solution</h1>
+        </div>
+        <form
+          action="{{ url_for('issues.solved_issues') }}"
+          method="get"
+          class="search-form"
+        >
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input
+              type="text"
+              name="q"
+              value="{{ q or '' }}"
+              placeholder="Search submitted solutions..."
+            />
+          </div>
+        </form>
+      </div>
+
+      <div class="solved-issues-container">
+        {% if solved_issues %} {% for item in solved_issues %}
+        <div class="solved-card">
+          <!-- Issue Information -->
+          <div class="issue-section">
+            <div class="section-header">
+              <i class="fas fa-exclamation-circle"></i>
+              <h3>Issue Details</h3>
+            </div>
+
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Issue ID:</span>
+                <span class="info-value"
+                  >#LBM-{{ '%04d'|format(item.issue_id) }}</span
+                >
+              </div>
+              <div class="info-item">
+                <span class="info-label">Status:</span>
+                <span class="status-badge">Solved</span>
+              </div>
+            </div>
+
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Building Number:</span>
+                <span class="info-value">{{ item.building_number }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Lab Number:</span>
+                <span class="info-value">{{ item.lab_number }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">PC Number:</span>
+                <span class="info-value">{{ item.pc_number }}</span>
+              </div>
+            </div>
+
+            <div class="info-item-full">
+              <span class="info-label">Issue Type:</span>
+              <span class="issue-type-badge">{{ item.issue_type }}</span>
+            </div>
+
+            <div class="info-item-full">
+              <span class="info-label">Issue Details:</span>
+              <p class="issue-details-text">{{ item.issue_details }}</p>
+            </div>
+
+            {% if item.issue_image %}
+            <div class="image-container">
+              <img
+                src="{{ url_for('static', filename='uploads/issues/' + item.issue_image) }}"
+                alt="Issue Image"
+                class="issue-image"
+                onclick="openImageModal(this.src)"
+              />
+              <span class="image-caption"
+                ><i class="fas fa-image"></i> Issue Image</span
+              >
+            </div>
+            {% endif %}
+
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Registered By:</span>
+                <span class="info-value"
+                  ><i class="fas fa-user"></i> {{ item.registered_by }}</span
+                >
+              </div>
+              <div class="info-item">
+                <span class="info-label">Registered Time:</span>
+                <span class="info-value"
+                  ><i class="fas fa-clock"></i> {{ item.registered_time }}</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Solution Information -->
+          <div class="solution-section">
+            <div class="section-header solution-header">
+              <i class="fas fa-lightbulb"></i>
+              <h3>Solution Details</h3>
+            </div>
+
+            <div class="info-item-full">
+              <span class="info-label">Solution ID:</span>
+              <span class="info-value"
+                >#SOL-{{ '%04d'|format(item.solution_id) }}</span
+              >
+            </div>
+
+            <div class="info-item-full">
+              <span class="info-label">Solved By:</span>
+              <span class="info-value"
+                ><i class="fas fa-user-check"></i> {{ item.solved_by }}</span
+              >
+            </div>
+
+            <div class="info-item-full">
+              <span class="info-label">Solution Text:</span>
+              <p class="solution-text">{{ item.solution_text }}</p>
+            </div>
+
+            {% if item.solution_image %}
+            <div class="image-container">
+              <img
+                src="{{ url_for('static', filename='uploads/solutions/' + item.solution_image) }}"
+                alt="Solution Image"
+                class="solution-image"
+                onclick="openImageModal(this.src)"
+              />
+              <span class="image-caption"
+                ><i class="fas fa-image"></i> Solution Image</span
+              >
+            </div>
+            {% endif %}
+
+            <div class="info-item-full">
+              <span class="info-label">Submitted Time:</span>
+              <span class="info-value"
+                ><i class="fas fa-clock"></i> {{ item.submitted_time }}</span
+              >
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+        <!-- Pagination -->
+        <div class="pagination">
+          {% if page > 1 %}
+          <a
+            href="{{ url_for('issues.solved_issues', page=page-1, q=q) }}"
+            class="pagination-btn prev-btn"
+          >
+            <i class="fas fa-chevron-left"></i> Previous
+          </a>
+          {% else %}
+          <button class="pagination-btn prev-btn disabled" disabled>
+            <i class="fas fa-chevron-left"></i> Previous
+          </button>
+          {% endif %}
+
+          <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
+
+          {% if page < total_pages %}
+          <a
+            href="{{ url_for('issues.solved_issues', page=page+1, q=q) }}"
+            class="pagination-btn next-btn"
+          >
+            Next <i class="fas fa-chevron-right"></i>
+          </a>
+          {% else %}
+          <button class="pagination-btn next-btn disabled" disabled>
+            Next <i class="fas fa-chevron-right"></i>
+          </button>
+          {% endif %}
+        </div>
+
+        {% else %}
+        <div class="no-data">
+          <i class="fas fa-folder-open"></i>
+          <p>No solved issues found.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal" onclick="closeImageModal()">
+      <span class="close">&times;</span>
+      <img class="modal-content" id="modalImage" />
+    </div>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='issue_view.js') }}"></script>
+    <script>
+      (function () {
+        const input = document.querySelector(".search-box input");
+        const cards = document.querySelectorAll(".solved-card");
+        if (!input || !cards.length) return;
+
+        function normalize(text) {
+          return (text || "").toLowerCase();
+        }
+
+        function filterSolvedCards() {
+          const q = normalize(input.value.trim());
+          cards.forEach((card) => {
+            // Collect searchable text from the card
+            const issueHeader = card.querySelector(
+              ".issue-section .section-header h3"
+            );
+            const issueType = card.querySelector(".issue-type-badge");
+            const building = card.querySelector(
+              ".info-item:nth-child(1) .info-value"
+            );
+            const lab = card.querySelector(
+              ".info-item:nth-child(2) .info-value"
+            );
+            const pc = card.querySelector(
+              ".info-item:nth-child(3) .info-value"
+            );
+            const issueId = card.querySelector(".info-item .info-value");
+            const registeredBy = card.querySelector(
+              ".info-grid .info-item .info-value"
+            );
+            const registeredTime = card.querySelector(
+              ".info-grid .info-item:nth-child(2) .info-value"
+            );
+            const details = card.querySelector(".issue-details-text");
+            const solutionId = card.querySelector(
+              ".solution-section .info-item-full .info-value"
+            );
+            const solvedBy = card.querySelector(
+              ".solution-section .info-item-full:nth-child(3) .info-value"
+            );
+            const solutionText = card.querySelector(".solution-text");
+
+            const haystack = [
+              issueHeader && issueHeader.textContent,
+              issueType && issueType.textContent,
+              building && building.textContent,
+              lab && lab.textContent,
+              pc && pc.textContent,
+              issueId && issueId.textContent,
+              registeredBy && registeredBy.textContent,
+              registeredTime && registeredTime.textContent,
+              details && details.textContent,
+              solutionId && solutionId.textContent,
+              solvedBy && solvedBy.textContent,
+              solutionText && solutionText.textContent,
+            ]
+              .filter(Boolean)
+              .map(normalize)
+              .join(" ");
+
+            if (!q || haystack.includes(q)) {
+              card.style.display = "block";
+            } else {
+              card.style.display = "none";
+            }
+          });
+        }
+
+        input.addEventListener("input", filterSolvedCards);
+
+        // If server rendered with an initial q, apply it on load
+        const urlParams = new URLSearchParams(window.location.search);
+        const initial = urlParams.get("q");
+        if (initial) {
+          input.value = initial;
+          filterSolvedCards();
+        }
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LABMentor - View Issue</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dashboard.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='issue_view.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-left">
+        <button class="menu-btn" onclick="toggleSidebar()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <img
+          src="{{ url_for('static', filename='logo.png') }}"
+          alt="Logo"
+          class="nav-logo"
+        />
+        <a href="{{ url_for('auth.dashboard') }}" class="home-link">
+          <i class="fas fa-home"></i> Home
+        </a>
+      </div>
+      <div class="nav-right">
+        <img
+          src="{{ url_for('static', filename='avtar.png') }}"
+          alt="User"
+          class="user-avatar-small"
+        />
+        <span class="welcome-text">Welcome back!</span>
+      </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+      <ul class="menu-list">
+        <li>
+          <a href="{{ url_for('auth.dashboard') }}"
+            ><i class="fas fa-home"></i> Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('issues.report_issue') }}"
+            ><i class="fas fa-exclamation-circle"></i> Issue Reporting</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('issues.solved_issues') }}"
+            ><i class="fas fa-check-circle"></i> Submitted Solutions</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('ai_chat.ai_chat_page') }}"
+            ><i class="fas fa-robot"></i> AI Mentor Chat</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('auth.user_profile') }}"
+            ><i class="fas fa-user"></i> User Profile</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('auth.logout') }}"
+            ><i class="fas fa-sign-out-alt"></i> Logout</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="issue-details-container">
+        <h2 class="section-title">VIEW ISSUE DETAILS</h2>
+
+        <div class="issue-card-view">
+          <div class="issue-header-info">
+            <span class="issue-id-label">Issue ID:</span>
+            <span class="issue-id-value"
+              >#LBM-{{ '%04d'|format(issue.issue_id) }}</span
+            >
+          </div>
+
+          <div class="detail-row">
+            <div class="detail-item">
+              <span class="detail-label">Building Number:</span>
+              <span class="detail-value">{{ issue.building_number }}</span>
+            </div>
+          </div>
+
+          <div class="detail-row-grid">
+            <div class="detail-item">
+              <span class="detail-label">Lab Number</span>
+              <span class="detail-value">{{ issue.lab_number }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">PC Number</span>
+              <span class="detail-value">{{ issue.pc_number }}</span>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <div class="detail-item">
+              <span class="detail-label">Registered by</span>
+              <span class="detail-value">
+                <i class="fas fa-user-circle" style="color: #60a5fa"></i> UID:
+                {{ issue.uid }}
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Registered Time:</span>
+              <span class="detail-value">{{ issue.registered_time }}</span>
+            </div>
+          </div>
+
+          <div class="issue-type-section">
+            <h3 class="issue-type-title">{{ issue.issue_type }}</h3>
+          </div>
+
+          <div class="issue-description">
+            <p>{{ issue.issue_details }}</p>
+          </div>
+
+          {% if issue.issue_image %}
+          <div class="issue-images">
+            <div
+              class="image-thumbnail"
+              onclick="openImageModal('{{ url_for('static', filename='uploads/issues/' + issue.issue_image) }}')"
+            >
+              <img
+                src="{{ url_for('static', filename='uploads/issues/' + issue.issue_image) }}"
+                alt="Issue Image"
+              />
+              <div class="image-label">
+                <i class="fas fa-image"></i> Issue Image(s)
+              </div>
+            </div>
+            <div class="camera-icon">
+              <i class="fas fa-camera"></i>
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="action-section">
+            <button
+              class="submit-solution-btn"
+              onclick="submitSolution({{ issue.issue_id }})"
+            >
+              Submit Solution
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal" onclick="closeImageModal()">
+      <span class="close">&times;</span>
+      <img class="modal-content" id="modalImage" />
+      <div id="caption"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='issue_view.js') }}"></script>
+  </body>
+</html>

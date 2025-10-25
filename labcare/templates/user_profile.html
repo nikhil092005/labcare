@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LABMentor - User Profile</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dashboard.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='user_profile.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-left">
+        <button class="menu-btn" onclick="toggleSidebar()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <img
+          src="{{ url_for('static', filename='logo.png') }}"
+          alt="Logo"
+          class="nav-logo"
+        />
+        <a href="{{ url_for('auth.dashboard') }}" class="home-link">
+          <i class="fas fa-home"></i> Home
+        </a>
+      </div>
+      <div class="nav-right">
+        <span class="page-title-nav">User Profile</span>
+      </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+      <ul class="menu-list">
+        <li>
+          <a href="{{ url_for('auth.dashboard') }}"
+            ><i class="fas fa-home"></i> Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('issues.report_issue') }}"
+            ><i class="fas fa-exclamation-circle"></i> Issue Reporting</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('issues.solved_issues') }}"
+            ><i class="fas fa-check-circle"></i> Submitted Solutions</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('ai_chat.ai_chat_page') }}"
+            ><i class="fas fa-robot"></i> AI Mentor Chat</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('auth.logout') }}"
+            ><i class="fas fa-sign-out-alt"></i> Logout</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="profile-container">
+        <!-- User Header -->
+        <div class="user-header">
+          <div class="user-avatar-large">
+            <img
+              src="{{ url_for('static', filename='avtar.png') }}"
+              alt="User Avatar"
+            />
+          </div>
+          <div class="user-header-info">
+            <h2>Hello, {{ user.name }}!</h2>
+            <div class="user-stars">
+              {% for i in range(user.stars) %}
+              <i class="fas fa-star"></i>
+              {% endfor %} {% for i in range(5 - user.stars) %}
+              <i class="far fa-star"></i>
+              {% endfor %}
+              <span>({{ user.stars }}/5 Stars)</span>
+            </div>
+          </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          {{ message }}
+          <button onclick="this.parentElement.style.display='none'">
+            &times;
+          </button>
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+
+        <div class="profile-content">
+          <!-- Personal Information Section -->
+          <div class="profile-section">
+            <h3 class="section-title">
+              <i class="fas fa-user-circle"></i> Personal Information
+            </h3>
+
+            <form
+              action="{{ url_for('auth.update_profile') }}"
+              method="POST"
+              class="profile-form"
+            >
+              <div class="form-field">
+                <label>UID:</label>
+                <div class="field-display">
+                  <input type="text" value="{{ user.uid }}" readonly />
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label>Name:</label>
+                <div class="field-editable">
+                  <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    value="{{ user.name }}"
+                    readonly
+                  />
+                  <button
+                    type="button"
+                    class="edit-btn"
+                    onclick="enableEdit('name')"
+                  >
+                    Update
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label>Email:</label>
+                <div class="field-editable">
+                  <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    value="{{ user.email }}"
+                    readonly
+                  />
+                  <button
+                    type="button"
+                    class="edit-btn"
+                    onclick="enableEdit('email')"
+                  >
+                    Update
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label>Mobile Number:</label>
+                <div class="field-editable">
+                  <input
+                    type="text"
+                    name="mobile_number"
+                    id="mobile_number"
+                    value="{{ user.mobile_number }}"
+                    readonly
+                  />
+                  <button
+                    type="button"
+                    class="edit-btn"
+                    onclick="enableEdit('mobile_number')"
+                  >
+                    Update
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label>Course:</label>
+                <div class="field-editable">
+                  <div class="course-field">
+                    <i class="fas fa-graduation-cap"></i>
+                    <div class="stars-small">
+                      {% for i in range(user.stars) %}
+                      <i class="fas fa-star"></i>
+                      {% endfor %} {% for i in range(5 - user.stars) %}
+                      <i class="far fa-star"></i>
+                      {% endfor %}
+                      <span>({{ user.stars }}/5 Stars)</span>
+                    </div>
+                  </div>
+                  <input
+                    type="text"
+                    name="course"
+                    id="course"
+                    value="{{ user.course }}"
+                    readonly
+                  />
+                  <button
+                    type="button"
+                    class="edit-btn"
+                    onclick="enableEdit('course')"
+                  >
+                    Update
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button
+                  type="submit"
+                  class="save-btn"
+                  id="saveBtn"
+                  style="display: none"
+                >
+                  <i class="fas fa-save"></i> Save All Changes
+                </button>
+                <button
+                  type="button"
+                  class="password-btn"
+                  onclick="openPasswordModal()"
+                >
+                  <i class="fas fa-key"></i> Change Password
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Statistics Section -->
+          <div class="profile-section stats-section">
+            <h3 class="section-title">
+              <i class="fas fa-chart-bar"></i> LABMentor Statistics
+            </h3>
+
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-label">Credits</div>
+                <div class="stat-value">{{ user.credits }}</div>
+              </div>
+
+              <div class="stat-item">
+                <div class="stat-label">
+                  Rank: <span class="rank-badge">{{ user.rank }}</span>
+                </div>
+              </div>
+
+              <div class="stat-item">
+                <div class="stat-label">Stars</div>
+                <div class="stat-stars">
+                  {% for i in range(user.stars) %}
+                  <i class="fas fa-star"></i>
+                  {% endfor %} {% for i in range(5 - user.stars) %}
+                  <i class="far fa-star"></i>
+                  {% endfor %}
+                  <span>({{ user.stars }}/5 Stars)</span>
+                </div>
+              </div>
+
+              <div class="stat-item">
+                <div class="stat-label">Total Issues Registered:</div>
+                <div class="stat-value">{{ user.issues_registered }}</div>
+              </div>
+
+              <div class="stat-item">
+                <div class="stat-label">Issues Solved:</div>
+                <div class="stat-value">{{ user.issues_solved }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div
+      id="passwordModal"
+      class="modal-overlay"
+      onclick="closePasswordModal()"
+    >
+      <div class="modal-content-box" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <h3><i class="fas fa-lock"></i> Change Password</h3>
+          <button class="close-modal" onclick="closePasswordModal()">
+            &times;
+          </button>
+        </div>
+        <form
+          action="{{ url_for('auth.change_password') }}"
+          method="POST"
+          class="password-form"
+        >
+          <div class="modal-field">
+            <label>Current Password:</label>
+            <input type="password" name="current_password" required />
+          </div>
+          <div class="modal-field">
+            <label>New Password:</label>
+            <input type="password" name="new_password" required />
+          </div>
+          <div class="modal-field">
+            <label>Confirm New Password:</label>
+            <input type="password" name="confirm_password" required />
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="modal-btn primary">
+              <i class="fas fa-check"></i> Update Password
+            </button>
+            <button
+              type="button"
+              class="modal-btn secondary"
+              onclick="closePasswordModal()"
+            >
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='user_profile.js') }}"></script>
+  </body>
+</html>

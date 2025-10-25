@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LABMentor - AI Mentor Chat</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dashboard.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='ai_chat.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+    />
+  </head>
+  <body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-left">
+        <button class="menu-btn" onclick="toggleSidebar()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <img
+          src="{{ url_for('static', filename='logo.png') }}"
+          alt="Logo"
+          class="nav-logo"
+        />
+        <a href="{{ url_for('auth.dashboard') }}" class="home-link">
+          <i class="fas fa-home"></i> Home
+        </a>
+      </div>
+      <div class="nav-right">
+        <i class="fas fa-robot welcome-icon"></i>
+        <span class="welcome-text">AI Mentor Chat</span>
+      </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+      <ul class="menu-list">
+        <li>
+          <a href="{{ url_for('auth.dashboard') }}"
+            ><i class="fas fa-home"></i> Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('issues.report_issue') }}"
+            ><i class="fas fa-exclamation-circle"></i> Issue Reporting</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('issues.solved_issues') }}"
+            ><i class="fas fa-check-circle"></i> Submitted Solutions</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('auth.user_profile') }}"
+            ><i class="fas fa-user"></i> User Profile</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('auth.logout') }}"
+            ><i class="fas fa-sign-out-alt"></i> Logout</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <div class="header-left">
+          <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            alt="LABMentor Logo"
+            class="chat-logo"
+          />
+          <div class="header-info">
+            <h1>AI Mentor</h1>
+            <p>Your intelligent lab assistant</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="new-chat-btn" onclick="startNewChat()">
+            <i class="fas fa-plus"></i> New Chat
+          </button>
+          <button class="chat-history-btn" onclick="toggleChatHistory()">
+            <i class="fas fa-history"></i> History
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat History Sidebar -->
+      <div class="chat-history-sidebar" id="chatHistorySidebar">
+        <div class="history-header">
+          <h3>Chat History</h3>
+          <div class="history-actions">
+            <button
+              class="delete-all-btn"
+              onclick="window.aiChat.deleteAllChats()"
+              title="Delete all chats"
+            >
+              <i class="fas fa-trash-alt"></i>
+            </button>
+            <button class="close-history" onclick="toggleChatHistory()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div class="history-list" id="historyList">
+          <!-- Chat history will be populated here -->
+        </div>
+      </div>
+
+      <!-- Chat Container -->
+      <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+          <div class="welcome-message">
+            <div class="welcome-content">
+              <i class="fas fa-robot"></i>
+              <h2>Welcome to AI Mentor!</h2>
+              <p>
+                I'm here to help you with your lab issues, coding problems, and
+                academic questions.
+              </p>
+              <div class="quick-actions">
+                <button
+                  class="quick-btn"
+                  onclick="askQuickQuestion('Help me with coding problems and provide optimized solutions')"
+                >
+                  <i class="fas fa-code"></i> Coding Help
+                </button>
+                <button
+                  class="quick-btn"
+                  onclick="askQuickQuestion('How to troubleshoot network connectivity?')"
+                >
+                  <i class="fas fa-network-wired"></i> Network Issues
+                </button>
+                <button
+                  class="quick-btn"
+                  onclick="askQuickQuestion('How to optimize database queries?')"
+                >
+                  <i class="fas fa-database"></i> Database Help
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Input Area -->
+        <div class="chat-input-container">
+          <div class="input-tools">
+            <button
+              class="tool-btn"
+              onclick="toggleFileUpload()"
+              title="Upload File"
+            >
+              <i class="fas fa-paperclip"></i>
+            </button>
+            <button
+              class="tool-btn"
+              onclick="toggleCodeMode()"
+              title="Code Mode"
+            >
+              <i class="fas fa-code"></i>
+            </button>
+            <button
+              class="tool-btn"
+              onclick="toggleGeminiTools()"
+              title="AI Tools"
+            >
+              <i class="fas fa-magic"></i>
+            </button>
+            <button class="tool-btn" onclick="clearChat()" title="Clear Chat">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+
+          <div
+            class="file-upload-area"
+            id="fileUploadArea"
+            style="display: none"
+          >
+            <input
+              type="file"
+              id="fileInput"
+              multiple
+              accept=".txt,.pdf,.doc,.docx,.py,.js,.html,.css,.json,.md"
+            />
+            <label for="fileInput" class="file-upload-label">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <span>Upload files to analyze</span>
+            </label>
+            <div class="uploaded-files" id="uploadedFiles"></div>
+          </div>
+
+          <div
+            class="gemini-tools-panel"
+            id="geminiToolsPanel"
+            style="display: none"
+          >
+            <h4>AI Tools Available</h4>
+            <div class="tools-grid">
+              <button
+                class="tool-option"
+                onclick="selectTool('code_generation')"
+              >
+                <i class="fas fa-code"></i> Code Generation
+              </button>
+              <button class="tool-option" onclick="selectTool('debugging')">
+                <i class="fas fa-bug"></i> Debugging
+              </button>
+              <button class="tool-option" onclick="selectTool('explanation')">
+                <i class="fas fa-lightbulb"></i> Explanation
+              </button>
+              <button class="tool-option" onclick="selectTool('optimization')">
+                <i class="fas fa-rocket"></i> Optimization
+              </button>
+              <button class="tool-option" onclick="selectTool('documentation')">
+                <i class="fas fa-book"></i> Documentation
+              </button>
+              <button
+                class="tool-option"
+                onclick="selectTool('troubleshooting')"
+              >
+                <i class="fas fa-wrench"></i> Troubleshooting
+              </button>
+            </div>
+          </div>
+
+          <div class="chat-input-wrapper">
+            <textarea
+              id="chatInput"
+              placeholder="Ask me anything about your lab issues, coding problems, or academic questions..."
+              rows="1"
+            ></textarea>
+            <button class="send-btn" onclick="sendMessage()">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none">
+      <div class="loading-spinner">
+        <i class="fas fa-robot"></i>
+        <p>AI Mentor is thinking...</p>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='ai_chat.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  </body>
+</html>

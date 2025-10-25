@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LABMentor - Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dashboard.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-left">
+        <button class="menu-btn" onclick="toggleSidebar()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <img
+          src="{{ url_for('static', filename='logo.png') }}"
+          alt="Logo"
+          class="nav-logo"
+        />
+      </div>
+      <div class="nav-right">
+        <i class="fas fa-crown welcome-icon"></i>
+        <span class="welcome-text">Welcome back, {{ name }}!</span>
+      </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+      <ul class="menu-list">
+        <li>
+          <a href="{{ url_for('issues.report_issue') }}"
+            ><i class="fas fa-exclamation-circle"></i> Issue Reporting</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('issues.solved_issues') }}"
+            ><i class="fas fa-check-circle"></i> Submitted Solution</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('ai_chat.ai_chat_page') }}"
+            ><i class="fas fa-robot"></i> AI Mentor Chat</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('auth.user_profile') }}"
+            ><i class="fas fa-user"></i> User Profile</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('auth.logout') }}"
+            ><i class="fas fa-sign-out-alt"></i> Logout</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- User Summary Card -->
+      <div class="user-card">
+        <div class="user-avatar">
+          <img
+            src="{{ url_for('static', filename='avtar.png') }}"
+            alt="User Avatar"
+          />
+        </div>
+        <div class="user-info">
+          <h2>{{ name }}</h2>
+          <div class="rank-badge">RANK: {{ rank }}</div>
+          <div class="stars">
+            {% for i in range(stars) %}
+            <i class="fas fa-star"></i>
+            {% endfor %} {% for i in range(5 - stars) %}
+            <i class="far fa-star"></i>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="user-stats">
+          <div class="stat-box">
+            <p class="stat-label">CREDITS:</p>
+            <p class="stat-value">{{ credits }}</p>
+          </div>
+          <div class="stat-box">
+            <p class="stat-label">ISSUES REGISTERED:</p>
+            <p class="stat-value">{{ issues_registered }}</p>
+          </div>
+          <div class="stat-box">
+            <p class="stat-label">SOLVED:</p>
+            <p class="stat-value">{{ issues_solved }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Mentor Quick Access -->
+      <div class="ai-mentor-card">
+        <div class="ai-mentor-header">
+          <div class="ai-mentor-icon">
+            <i class="fas fa-robot"></i>
+          </div>
+          <div class="ai-mentor-info">
+            <h3>AI Mentor</h3>
+            <p>Get instant help with your lab issues and coding problems</p>
+          </div>
+          <a href="{{ url_for('ai_chat.ai_chat_page') }}" class="ai-chat-btn">
+            <i class="fas fa-comments"></i> Start Chat
+          </a>
+        </div>
+        <div class="ai-quick-actions">
+          <button
+            class="ai-quick-btn"
+            onclick="askCodingAI('Help me with coding problems and provide optimized solutions')"
+          >
+            <i class="fas fa-code"></i> Coding Help
+          </button>
+          <button
+            class="ai-quick-btn"
+            onclick="askAI('How to troubleshoot network issues?')"
+          >
+            <i class="fas fa-network-wired"></i> Network Help
+          </button>
+          <button
+            class="ai-quick-btn"
+            onclick="askAI('How to optimize database queries?')"
+          >
+            <i class="fas fa-database"></i> Database Help
+          </button>
+        </div>
+      </div>
+
+      <!-- Open Issues Section -->
+      <div class="issues-section">
+        <div class="section-header">
+          <h2>OPEN ISSUES</h2>
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input
+              type="text"
+              id="searchIssue"
+              placeholder="Search issues..."
+              onkeyup="searchIssues()"
+            />
+          </div>
+        </div>
+
+        <div class="issues-grid" id="issuesGrid">
+          {% if issues %} {% for issue in issues %}
+          <div class="issue-card">
+            <div class="issue-header">
+              <i class="fas fa-exclamation-triangle issue-icon"></i>
+              <h3>#{{ issue.issue_id }} - {{ issue.issue_type }}</h3>
+            </div>
+            <p class="issue-details">{{ issue.issue_details }}</p>
+            <div class="issue-meta">
+              <span
+                ><i class="fas fa-clock"></i> {{ issue.registered_time }}</span
+              >
+              <span><i class="fas fa-user"></i> {{ issue.reported_by }}</span>
+            </div>
+            <button class="view-btn" onclick="viewIssue({{ issue.issue_id }})">
+              VIEW
+            </button>
+          </div>
+          {% endfor %} {% else %}
+          <div class="no-issues">
+            <i class="fas fa-check-circle"></i>
+            <p>No open issues at the moment!</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script>
+      function askAI(question) {
+        // Store the question in localStorage and redirect to AI chat
+        localStorage.setItem("ai_quick_question", question);
+        window.location.href = "{{ url_for('ai_chat.ai_chat_page') }}";
+      }
+
+      function askCodingAI(question) {
+        // Store the question and enable code mode in localStorage
+        localStorage.setItem("ai_quick_question", question);
+        localStorage.setItem("ai_code_mode", "true");
+        window.location.href = "{{ url_for('ai_chat.ai_chat_page') }}";
+      }
+    </script>
+  </body>
+</html>

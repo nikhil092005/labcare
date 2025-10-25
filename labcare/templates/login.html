@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LABMentor - Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='login.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <form
+        id="loginForm"
+        action="{{ url_for('auth.login') }}"
+        method="POST"
+        autocomplete="off"
+      >
+        <div class="logo-img">
+          <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            alt="LABMentor Logo"
+          />
+        </div>
+        <p class="subtitle">Solve Computer Issues. Enhance Your Skills.</p>
+
+        <label for="email_uid">Email or UID</label>
+        <input type="text" id="email_uid" name="email_uid" required />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required />
+
+        <div class="button-row">
+          <button type="submit" class="register-btn">Login</button>
+        </div>
+
+        <div class="links">
+          <a href="{{ url_for('auth.register') }}">Not a user? Register here</a>
+        </div>
+        <div class="links">
+          <a href="#">Forgot Password?</a>
+        </div>
+      </form>
+    </div>
+    <!-- <script src="{{ url_for('static', filename='login.js') }}"></script> -->
+  </body>
+</html>

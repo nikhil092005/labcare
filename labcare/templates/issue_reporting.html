@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LABMentor - Issue Reporting</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dashboard.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='issue_reporting.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-left">
+        <button class="menu-btn" onclick="toggleSidebar()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <img
+          src="{{ url_for('static', filename='logo.png') }}"
+          alt="Logo"
+          class="nav-logo"
+        />
+        <a href="{{ url_for('auth.dashboard') }}" class="home-link">
+          <i class="fas fa-home"></i> Home
+        </a>
+      </div>
+      <div class="nav-right">
+        <i class="fas fa-crown welcome-icon"></i>
+        <span class="welcome-text">Welcome back, {{ name }}!</span>
+      </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+      <ul class="menu-list">
+        <li>
+          <a href="{{ url_for('auth.dashboard') }}"
+            ><i class="fas fa-home"></i> Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('issues.solved_issues') }}"
+            ><i class="fas fa-check-circle"></i> Submitted Solutions</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('ai_chat.ai_chat_page') }}"
+            ><i class="fas fa-robot"></i> AI Mentor Chat</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('auth.user_profile') }}"
+            ><i class="fas fa-user"></i> User Profile</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('auth.logout') }}"
+            ><i class="fas fa-sign-out-alt"></i> Logout</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="form-container">
+        <div class="form-header">
+          <i class="fas fa-exclamation-triangle"></i>
+          <h2>Report an Issue</h2>
+        </div>
+        <!-- 
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          {{ message }}
+          <button onclick="this.parentElement.style.display='none'">
+            &times;
+          </button>
+        </div>
+        {% endfor %} {% endif %} {% endwith %} -->
+
+        <form
+          action="{{ url_for('issues.report_issue') }}"
+          method="POST"
+          enctype="multipart/form-data"
+          class="issue-form"
+        >
+          <div class="form-row">
+            <div class="form-group">
+              <label for="building_number"
+                ><i class="fas fa-building"></i> Building Number</label
+              >
+              <input
+                type="text"
+                id="building_number"
+                name="building_number"
+                placeholder="Enter building number"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="lab_number"
+                ><i class="fas fa-flask"></i> LAB Number</label
+              >
+              <input
+                type="text"
+                id="lab_number"
+                name="lab_number"
+                placeholder="Enter lab number"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pc_number"
+                ><i class="fas fa-desktop"></i> PC Number</label
+              >
+              <input
+                type="text"
+                id="pc_number"
+                name="pc_number"
+                placeholder="Enter PC number"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="uid"><i class="fas fa-user"></i> UID</label>
+              <input
+                type="text"
+                id="uid"
+                name="uid"
+                value="{{ uid }}"
+                readonly
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="issue_type"
+              ><i class="fas fa-list"></i> Issue Type</label
+            >
+            <select id="issue_type" name="issue_type" required>
+              <!-- <option value="">-- Select Issue Type --</option> -->
+              <option value="Os Issue">Operating System (OS)</option>
+              <option value="Software Issue">Software</option>
+              <option value="Hardware Issue">Hardware</option>
+              <option value="Internet Issue">Internet</option>
+              <option value="Other Issue">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="issue_details"
+              ><i class="fas fa-align-left"></i> Issue Details</label
+            >
+            <textarea
+              id="issue_details"
+              name="issue_details"
+              rows="5"
+              placeholder="Describe the issue in detail..."
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="issue_image"
+              ><i class="fas fa-image"></i> Issue Image (Optional)</label
+            >
+            <div class="file-upload-wrapper">
+              <input
+                type="file"
+                id="issue_image"
+                name="issue_image"
+                accept="image/*"
+                onchange="previewImage(event)"
+              />
+              <label for="issue_image" class="file-upload-label">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <span>Choose Image or Drag & Drop</span>
+              </label>
+              <div id="imagePreview" class="image-preview"></div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="submit-btn">
+              <i class="fas fa-paper-plane"></i> Submit Issue
+            </button>
+            <button type="reset" class="reset-btn" onclick="clearPreview()">
+              <i class="fas fa-redo"></i> Reset Form
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='issue_reporting.js') }}"></script>
+  </body>
+</html>

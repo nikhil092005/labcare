@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LABMentor - Solution Submission</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dashboard.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='issue_reporting.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-left">
+        <button class="menu-btn" onclick="toggleSidebar()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <img
+          src="{{ url_for('static', filename='logo.png') }}"
+          alt="Logo"
+          class="nav-logo"
+        />
+        <a href="{{ url_for('auth.dashboard') }}" class="home-link">
+          <i class="fas fa-home"></i> Home
+        </a>
+      </div>
+      <div class="nav-right">
+        <i class="fas fa-crown welcome-icon"></i>
+        <span class="welcome-text">Welcome back, {{ name }}!</span>
+      </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+      <ul class="menu-list">
+        <li>
+          <a href="{{ url_for('auth.dashboard') }}"
+            ><i class="fas fa-home"></i> Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('issues.report_issue') }}"
+            ><i class="fas fa-exclamation-circle"></i> Issue Reporting</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('issues.solved_issues') }}"
+            ><i class="fas fa-check-circle"></i> Submitted Solutions</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('ai_chat.ai_chat_page') }}"
+            ><i class="fas fa-robot"></i> AI Mentor Chat</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('auth.user_profile') }}"
+            ><i class="fas fa-user"></i> User Profile</a
+          >
+        </li>
+        <li>
+          <a href="{{ url_for('auth.logout') }}"
+            ><i class="fas fa-sign-out-alt"></i> Logout</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="form-container">
+        <div class="form-header">
+          <i class="fas fa-lightbulb"></i>
+          <h2>Submit Solution</h2>
+        </div>
+        <form
+          action="{{ url_for('issues.submit_solution', issue_id=issue_id) }}"
+          method="POST"
+          enctype="multipart/form-data"
+          class="issue-form"
+        >
+          <div class="form-row">
+            <div class="form-group">
+              <label for="issue_id"
+                ><i class="fas fa-hashtag"></i> Issue ID</label
+              >
+              <input
+                type="text"
+                id="issue_id"
+                name="issue_id"
+                value="#LBM-{{ '%04d'|format(issue_id) }}"
+                readonly
+              />
+              <input
+                type="hidden"
+                name="issue_id_value"
+                value="{{ issue_id }}"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="uid"><i class="fas fa-user"></i> UID</label>
+              <input
+                type="text"
+                id="uid"
+                name="uid"
+                value="{{ uid }}"
+                readonly
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="solution_text"
+              ><i class="fas fa-align-left"></i> Solution Details</label
+            >
+            <textarea
+              id="solution_text"
+              name="solution_text"
+              rows="6"
+              placeholder="Describe your solution in detail..."
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="solution_image"
+              ><i class="fas fa-image"></i> Solution Image (Optional)</label
+            >
+            <div class="file-upload-wrapper">
+              <input
+                type="file"
+                id="solution_image"
+                name="solution_image"
+                accept="image/*"
+                onchange="previewImage(event)"
+              />
+              <label for="solution_image" class="file-upload-label">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <span>Choose Image or Drag & Drop</span>
+              </label>
+              <div id="imagePreview" class="image-preview"></div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="submit-btn">
+              <i class="fas fa-paper-plane"></i> Submit Solution
+            </button>
+            <button
+              type="button"
+              class="reset-btn"
+              onclick="window.history.back()"
+            >
+              <i class="fas fa-arrow-left"></i> Go Back
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='issue_reporting.js') }}"></script>
+  </body>
+</html>

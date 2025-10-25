@@ -1,0 +1,159 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: radial-gradient(circle at center, #156198 0%, #01141d 100%);
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+.container {
+  width: 400px;
+  margin: 90px auto 0 auto;
+  background: rgba(30, 60, 100, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(2, 28, 60, 0.56);
+  padding: 40px 30px 30px 30px;
+  box-sizing: border-box;
+}
+
+/* Responsive Styling */
+@media (max-width: 600px) {
+  .container {
+    width: 95%;
+    margin-top: 40px;
+    padding: 30px 10px 24px 10px;
+  }
+  .logo-img img {
+    width: 65vw;
+    max-width: 200px;
+    min-width: 100px;
+  }
+  .register-btn {
+    width: 62vw;
+    max-width: 190px;
+    font-size: 15px;
+    padding: 11px 0;
+  }
+  .button-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    margin-top: 24px;
+  }
+  .login-circle {
+    width: 43px;
+    height: 43px;
+    font-size: 22px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 400px) {
+  .logo-img img {
+    width: 90vw;
+    min-width: 60px;
+    max-width: 110px;
+  }
+  .register-btn {
+    font-size: 13px;
+    padding: 9px 0;
+  }
+}
+
+.logo-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.logo-img img {
+  width: 210px;
+  height: auto;
+  margin-bottom: -14px;
+}
+
+.subtitle {
+  color: #aee4fa;
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 15px;
+}
+
+label {
+  display: block;
+  color: #d3f3fa;
+  font-size: 15px;
+  margin-bottom: 6px;
+  margin-top: 16px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  background: rgba(36, 72, 112, 0.93);
+  border: 1px solid #37b4ff;
+  outline: none;
+  color: #e0ecfb;
+  padding: 10px 11px;
+  font-size: 15px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+input:focus {
+  border-color: #33d2fd;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 0px;
+}
+
+.register-btn {
+  width: 65%;
+  max-width: 240px;
+  background: linear-gradient(90deg, #33d2fd 60%, #156198 100%);
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  padding: 13px 0;
+  border-radius: 7px;
+  margin-right: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 17px;
+}
+
+.register-btn:hover {
+  background: #37b4ff;
+}
+
+.login-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #33d2fd 60%, #156198 100%);
+  color: #fff;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(33, 210, 253, 0.21);
+  transition: background 0.3s;
+}
+.login-circle:hover {
+  background: #37b4ff;
+}
+.login-icon {
+  display: inline-block;
+  vertical-align: middle;
+}

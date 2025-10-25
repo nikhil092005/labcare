@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LABMentor - Registration</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='registration.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <form
+        id="registrationForm"
+        action="{{ url_for('auth.register') }}"
+        method="POST"
+        autocomplete="off"
+      >
+        <div class="logo-img">
+          <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            alt="LABMentor Logo"
+          />
+        </div>
+        <p class="subtitle">Solve Computer Issues. Enhance Your Skills.</p>
+
+        <label for="uid">UID</label>
+        <input type="text" id="uid" name="uid" required />
+
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required />
+
+        <label for="mobile_number">Mobile Number</label>
+        <input type="text" id="mobile_number" name="mobile_number" required />
+
+        <label for="course">Course</label>
+        <input type="text" id="course" name="course" required />
+
+        <div class="button-row">
+          <button type="submit" class="register-btn">Register</button>
+          <button
+            type="button"
+            class="login-circle"
+            title="Login"
+            onclick="window.location.href='{{ url_for('auth.login') }}'"
+          >
+            <span class="login-icon">&#128274;</span>
+          </button>
+        </div>
+      </form>
+    </div>
+    <!-- <script src="{{ url_for('static', filename='registration.js') }}"></script> -->
+  </body>
+</html>
